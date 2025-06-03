@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sqlite-reader-mcp"
+version = "0.1.0"
+authors = [
+  {name = "Abhinav Natarajan", email = "abhinav.v.natarajan@gmail.com"}
+]
+description = "MCP server for reading SQLite databases"
+readme = "README.md"
+license = {file = "LICENSE.txt"}
+requires-python = ">=3.13"
+dependencies = [
+    "aiosqlite>=0.21.0",
+    "fastmcp>=2.6.1",
+    "sqlparse>=0.5.3",
+]
+scripts = { sqlite-reader-mcp = "sqlite_reader_mcp.__main__:main" }
