@@ -6,8 +6,8 @@ import aiosqlite
 import sqlparse
 from fastmcp import FastMCP
 
-allowed_dirs = []
-allowed_files = []
+allowed_dirs: list[Path] = []
+allowed_files: list[Path] = []
 
 mcp = FastMCP(
     name="SQLite MCP Server",
@@ -23,7 +23,7 @@ class SQLiteConnection:
 
     async def __aenter__(self):
         self.conn = await aiosqlite.connect(
-            "file:" + str(self.db_path) + "?mode=ro", uri=True
+            self.db_path.as_uri() + "?mode=ro", uri=True
         )
         self.conn.row_factory = aiosqlite.Row
         return self.conn
@@ -34,7 +34,6 @@ class SQLiteConnection:
 
 # TODO: persistent connections to avoid reopening databases
 # connections: dict[str, SQLiteConnection] = {}
-
 
 def file_allowed(path: Path) -> bool:
     """Validate if the given path is allowed."""
@@ -140,8 +139,8 @@ async def list_tables(
 
         try:
             await cursor.execute("""
-                SELECT name FROM sqlite_master 
-                WHERE type='table' 
+                SELECT name FROM sqlite_master
+                WHERE type='table'
                 ORDER BY name
             """)
 
@@ -181,7 +180,7 @@ async def describe_table(
             # Verify table exists
             await cursor.execute(
                 """
-                SELECT name FROM sqlite_master 
+                SELECT name FROM sqlite_master
                 WHERE type='table' AND name=?
             """,
                 [table_name],
@@ -219,9 +218,9 @@ def main():
         if not p.exists():
             raise ValueError(f"Path does not exist: {path}")
         if p.is_dir():
-            allowed_dirs.append(p.as_uri())
+            allowed_dirs.append(p)
         elif p.is_file():
-            allowed_files.append(p.as_uri())
+            allowed_files.append(p)
     mcp.run()
 
 
