@@ -1,6 +1,6 @@
 import argparse
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 import aiosqlite
 import sqlparse
@@ -8,22 +8,12 @@ from fastmcp import FastMCP
 
 allowed_dirs = []
 allowed_files = []
+
 mcp = FastMCP(
     name="SQLite MCP Server",
-    instruction="This server allows read-only access to an SQLite database.",
+    instruction="This server allows read-only access to SQLite databases.",
     log_level="CRITICAL",
 )
-
-
-def file_allowed(path: Path) -> bool:
-    """Validate if the given path is allowed."""
-    if not path.is_absolute():
-        raise ValueError(f"Path must be absolute: {path}")
-    if not path.is_file():
-        raise FileNotFoundError(f"File not found: {path}")
-    return any(path == f for f in allowed_files) or any(
-        path.is_relative_to(d) for d in allowed_dirs
-    )
 
 
 class SQLiteConnection:
@@ -42,6 +32,19 @@ class SQLiteConnection:
         if self.conn:
             await self.conn.close()
 
+# TODO: persistent connections to avoid reopening databases
+# connections: dict[str, SQLiteConnection] = {}
+
+
+def file_allowed(path: Path) -> bool:
+    """Validate if the given path is allowed."""
+    if not path.is_absolute():
+        raise ValueError(f"Path must be absolute: {path}")
+    if not path.is_file():
+        raise FileNotFoundError(f"File not found: {path}")
+    return any(path == f for f in allowed_files) or any(
+        path.is_relative_to(d) for d in allowed_dirs
+    )
 
 @mcp.tool(
     annotations={
@@ -52,16 +55,16 @@ class SQLiteConnection:
 async def read_query(
     file_path: str,
     query: str,
-    params: Optional[List[Any]] = None,
+    params: Optional[list[Any]] = None,
     fetch_all: bool = True,
     row_limit: int = 1000,
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """
-    Execute a query on the Messages database.
+    Execute a query on an SQLite database.
 
     Args:
         file_path: Absolute path to the SQLite database file.
-        query: SELECT SQL query to execute.
+        query: 'SELECT' or 'WITH' SQL query to execute.
         params: Optional list of parameters for the query
         fetch_all: If True, fetches all results. If False, fetches one row.
         row_limit: Maximum number of rows to return (default 1000).
@@ -118,7 +121,7 @@ async def read_query(
 @mcp.tool()
 async def list_tables(
     file_path: str,
-) -> List[str]:
+) -> list[str]:
     """
     List all tables in the database.
 
@@ -152,7 +155,7 @@ async def list_tables(
 async def describe_table(
     file_path: str,
     table_name: str,
-) -> List[Dict[str, str]]:
+) -> list[dict[str, str]]:
     """Get detailed information about a table's schema.
 
     Args:

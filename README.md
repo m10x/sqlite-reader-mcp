@@ -4,7 +4,7 @@ MCP server for reading SQLite databases.
 
 ## Overview
 
-`sqlite-reader-mcp` is a Python-based server that provides read-only access to SQLite databases using the FastMCP framework. It allows users to execute SELECT queries, list tables, and describe table schemas in a secure manner.
+`sqlite-reader-mcp` is a lightweight MCP server that provides read-only access to SQLite databases. It allows users to execute SELECT queries, list tables, and describe table schemas.
 
 ## Features
 
@@ -29,21 +29,13 @@ MCP server for reading SQLite databases.
 
 The recommended installation method is with `uv`:
 ```bash
-uv tool install --from git:https://github.com/abhinavnatarajan/sqlite-reader-mcp
+uv tool install git+https://github.com/abhinavnatarajan/sqlite-reader-mcp
 ```
 
 ## Usage
 
-To start the server, run the main script from your terminal. You must provide the allowed paths for database access:
-
-Using `python -m`:
 ```bash
-python -m sqlite_reader_mcp.__main__ --paths /path/to/your/database.db /path/to/another/allowed_dir
-```
-
-If the package is installed and the script `sqlite-reader-mcp` is in your PATH:
-```bash
-sqlite-reader-mcp --paths /path/to/your/database.db /path/to/another/allowed_dir
+sqlite-reader-mcp --paths /path/to/your/database.db /path/to/another/allowed_directory
 ```
 
 **Arguments:**
