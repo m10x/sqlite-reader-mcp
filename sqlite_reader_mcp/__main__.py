@@ -11,7 +11,7 @@ allowed_files: list[Path] = []
 
 mcp = FastMCP(
     name="SQLite MCP Server",
-    instruction="This server allows read-only access to SQLite databases.",
+    instructions="This server allows read-only access to SQLite databases.",
     log_level="CRITICAL",
 )
 
